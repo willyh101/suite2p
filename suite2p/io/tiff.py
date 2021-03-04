@@ -150,6 +150,10 @@ def tiff_to_binary(ops):
                 im = tif.data()
             else:
                 im = tif.data(beg=ix, end=ix+nfr)
+                
+            # remove flyback artifacts
+            if 'remove_artifacts' in ops.keys():
+                im = im[:,:,slice(*ops['remove_artifacts'])]
 
             # for single-page tiffs, add 1st dim
             if len(im.shape) < 3:
