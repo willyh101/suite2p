@@ -55,11 +55,11 @@ setuptools.setup(
         "mkl>=2019.3",
       ],
       "data": [
-        "dvc>=1.1",
+        "dvc==1.11.0",
         "pydrive2",
       ],
       "nwb": [
-        "pynwb<1.4.0",
+        "pynwb",
       ]
     },
     include_package_data=True,
