@@ -49,11 +49,11 @@ def compute_crop(xoff: int, yoff: int, corrXY, th_badframes, badframes, maxregsh
     badframes = np.logical_or(px > th_badframes * 100, badframes)
     badframes = np.logical_or(abs(xoff) > (maxregshift * Lx * 0.95), badframes)
     badframes = np.logical_or(abs(yoff) > (maxregshift * Ly * 0.95), badframes)
-    if badframes.sum() > 5:
+    if badframes.mean() < 0.5:
         ymin = np.ceil(np.abs(yoff[np.logical_not(badframes)]).max())
         xmin = np.ceil(np.abs(xoff[np.logical_not(badframes)]).max())
     else:
-        print('WARNING: most frames have large movements, registration likely')
+        warn('WARNING: >50% of frames have large movements, registration likely problematic')
         ymin = np.ceil(np.abs(yoff).max())
         xmin = np.ceil(np.abs(xoff).max())
     ymax = Ly - ymin
@@ -140,7 +140,6 @@ def compute_reference(ops, frames):
             cfRefImg=rigid.phasecorr_reference(
                 refImg=refImg,
                 smooth_sigma=ops['smooth_sigma'],
-                pad_fft=ops['pad_fft'],
             ),
             maxregshift=ops['maxregshift'],
             smooth_sigma_time=ops['smooth_sigma_time'],
@@ -171,7 +170,6 @@ def compute_reference_masks(refImg, ops=None):
     cfRefImg = rigid.phasecorr_reference(
         refImg=refImg,
         smooth_sigma=ops['smooth_sigma'],
-        pad_fft=ops['pad_fft'],
     )
 
     if ops.get('nonrigid'):
@@ -185,7 +183,6 @@ def compute_reference_masks(refImg, ops=None):
             smooth_sigma=ops['smooth_sigma'],
             yblock=ops['yblock'],
             xblock=ops['xblock'],
-            pad_fft=ops['pad_fft'],
         )
     else:
         maskMulNR, maskOffsetNR, cfRefImgNR = [], [], []
