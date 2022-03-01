@@ -37,13 +37,14 @@ def compute_crop(xoff: int, yoff: int, corrXY, th_badframes, badframes, maxregsh
     yrange
     xrange
     """
-    dx = xoff - medfilt(xoff, 101)
-    dy = yoff - medfilt(yoff, 101)
+    filter_window = min((len(yoff)//2)*2 - 1, 101)
+    dx = xoff - medfilt(xoff, filter_window)
+    dy = yoff - medfilt(yoff, filter_window)
     # offset in x and y (normed by mean offset)
     dxy = (dx**2 + dy**2)**.5
     dxy = dxy / dxy.mean()
     # phase-corr of each frame with reference (normed by median phase-corr)
-    cXY = corrXY / medfilt(corrXY, 101)
+    cXY = corrXY / medfilt(corrXY, filter_window)
     # exclude frames which have a large deviation and/or low correlation
     px = dxy / np.maximum(0, cXY)
     badframes = np.logical_or(px > th_badframes * 100, badframes)
@@ -333,7 +334,7 @@ def register_binary(ops: Dict[str, Any], refImg=None, raw=True):
     if ops['nframes'] < 50:
         raise ValueError('the total number of frames should be at least 50.')
     if ops['nframes'] < 200:
-        warn('number of frames is below 200, unpredictable behaviors may occur.')
+        print('WARNING: number of frames is below 200, unpredictable behaviors may occur.')
 
     # get binary file paths
     raw = raw and ops.get('keep_movie_raw') and 'raw_file' in ops and path.isfile(ops['raw_file'])
@@ -342,6 +343,8 @@ def register_binary(ops: Dict[str, Any], refImg=None, raw=True):
         raw_file_align = ops.get('raw_file') if (ops['nchannels'] < 2 or ops['functional_chan'] == ops['align_by_chan']) else ops.get('raw_file_chan2')
     else:
         raw_file_align = None
+        if ops['do_bidiphase'] and ops['bidiphase'] != 0:
+            ops['bidi_corrected'] = True
 
     ### ----- compute and use bidiphase shift -------------- ###
     if refImg is None or (ops['do_bidiphase'] and ops['bidiphase'] == 0):
@@ -450,7 +453,7 @@ def register_binary(ops: Dict[str, Any], refImg=None, raw=True):
 
     # compute valid region
     # ignore user-specified bad_frames.npy
-    ops['badframes'] = np.zeros((ops['nframes'],), np.bool)
+    ops['badframes'] = np.zeros((ops['nframes'],), 'bool')
     if 'data_path' in ops and len(ops['data_path']) > 0:
         badfrfile = path.abspath(path.join(ops['data_path'][0], 'bad_frames.npy'))
         if path.isfile(badfrfile):
@@ -474,9 +477,6 @@ def register_binary(ops: Dict[str, Any], refImg=None, raw=True):
     
     # add enhanced mean image
     ops = enhanced_mean_image(ops)
-
-    if not raw:
-        ops['bidi_corrected'] = True
 
     return ops
 

@@ -214,7 +214,7 @@ def read_nwb(fpath):
                 for n in range(len(stat))]
         iscell = np.array(iscell)
         probcell = iscell[:,1]
-        iscell = iscell[:,0].astype(np.bool)
+        iscell = iscell[:,0].astype('bool')
         redcell = np.zeros_like(iscell)
         probredcell = np.zeros_like(probcell)
                 
@@ -305,7 +305,7 @@ def save_nwb(save_folder):
             excitation_lambda=600.,
             indicator='GCaMP',
             location='V1',
-            grid_spacing=([2,2,30] if multiplane else [2,2]),
+            grid_spacing=([2.0,2.0,30.0] if multiplane else [2.0,2.0]),
             grid_spacing_unit='microns'
         )
 
