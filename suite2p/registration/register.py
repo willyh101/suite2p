@@ -370,14 +370,14 @@ def compute_reference_and_register_frames(f_align_in, f_align_out=None, refImg=N
         frames = f_align_in[np.linspace(0, n_frames, 1 + np.minimum(ops['nimg_init'], n_frames), dtype=int)[:-1]]    
         # compute bidiphase shift
         if ops['do_bidiphase'] and ops['bidiphase'] == 0 and not ops['bidi_corrected']:
-            bidiphase = bidiphase.compute(frames)
-            print('NOTE: estimated bidiphase offset from data: %d pixels' % bidiphase)
-            ops['bidiphase'] = bidiphase
+            bidi = bidiphase.compute(frames)
+            print('NOTE: estimated bidiphase offset from data: %d pixels' % bidi)
+            ops['bidiphase'] = bidi
             # shift frames
-            if bidiphase != 0:
+            if bidi != 0:
                 bidiphase.shift(frames, int(ops['bidiphase']))
         else:
-            bidiphase = 0
+            bidi = 0
 
         if refImg is None:
             t0 = time.time()
@@ -402,9 +402,9 @@ def compute_reference_and_register_frames(f_align_in, f_align_out=None, refImg=N
             rmax = np.inf * np.ones(nZ)
 
     if ops['bidiphase'] and not ops['bidi_corrected']:
-        bidiphase = int(ops['bidiphase'])
+        bidi = int(ops['bidiphase'])
     else:
-        bidiphase = 0
+        bidi = 0
 
     refAndMasks = compute_reference_masks(refImg, ops)
     
@@ -422,7 +422,7 @@ def compute_reference_and_register_frames(f_align_in, f_align_out=None, refImg=N
         frames = f_align_in[k : min(k + batch_size, n_frames)]
         frames, ymax, xmax, cmax, ymax1, xmax1, cmax1, zest = register_frames(refAndMasks, frames, 
                                                                                 rmin=rmin, rmax=rmax, 
-                                                                                bidiphase=bidiphase, 
+                                                                                bidiphase=bidi, 
                                                                                 ops=ops,
                                                                                 nZ=nZ)
         rigid_offsets.append([ymax, xmax, cmax])
