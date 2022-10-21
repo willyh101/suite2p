@@ -76,7 +76,8 @@ def init_views(parent):
             mimg1 = np.percentile(mimg,1)
             mimg99 = np.percentile(mimg,99)
             mimg     = (mimg - mimg1) / (mimg99 - mimg1)
-            mimg = np.maximum(0,np.minimum(1,mimg))
+            mimg = np.maximum(0,np.minimum(1.5,mimg))
+            mimg = (mimg - mimg.min()) / (mimg.max() - mimg.min())
         elif k==3:
             if 'Vcorr' in parent.ops:
                 vcorr = parent.ops['Vcorr']
