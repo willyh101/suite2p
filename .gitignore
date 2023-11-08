@@ -67,4 +67,6 @@ Temporary Items
 .apdisk
 
 # data
+data
 data/test_data
+data/test_outputs/bruker/suite2p/run.log
