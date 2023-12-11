@@ -403,7 +403,7 @@ def compute_reference_and_register_frames(f_align_in, f_align_out=None, refImg=N
             if bidiphase != 0:
                 bidi.shift(frames, int(ops["bidiphase"]))
         else:
-            bidi = 0
+            bidiphase = 0
 
         if refImg is None:
             t0 = time.time()
@@ -430,7 +430,7 @@ def compute_reference_and_register_frames(f_align_in, f_align_out=None, refImg=N
     if ops["bidiphase"] and not ops["bidi_corrected"]:
         bidiphase = int(ops["bidiphase"])
     else:
-        bidi = 0
+        bidiphase = 0
 
     refAndMasks = compute_reference_masks(refImg, ops)
 
