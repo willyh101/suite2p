@@ -189,7 +189,7 @@ def tiff_to_binary(ops):
             iplane = 0
         ix = 0
         while 1:
-            im = read_tiff(file, tif, Ltif, ix, batch_size, use_sktiff, ops.get("x_crop_rng", None))
+            im = read_tiff(file, tif, Ltif, ix, batch_size, use_sktiff, ops.get("remove_artifacts", None))
             if im is None:
                 break          
             nframes = im.shape[0]
