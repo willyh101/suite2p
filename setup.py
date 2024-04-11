@@ -26,7 +26,9 @@ io_deps = [
     "nd2",
     "sbxreader",
     "h5py",
-    "opencv-python-headless"
+    "opencv-python-headless",
+    "xmltodict",
+    "dcimg"
 ]
 
 nwb_deps = [
@@ -63,7 +65,7 @@ try:
 except:
     pass
 
-all_deps = gui_deps + nwb_deps + test_deps + io_deps
+all_deps = gui_deps + nwb_deps + test_deps + io_deps 
 
 try:
     import torch
